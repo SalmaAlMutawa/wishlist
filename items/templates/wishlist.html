@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form action = "{% url 'wishlist'%}" class="form-inline my-2 my-lg-0" method = "GET">
+        <input class="form-control mr-sm-2" type="text" placeholder="Search Wishlist" value = "{{request.GET.q}}" aria-label="Search" name = 'q'>
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+</form>
+<div class="row">
+{% for item in my_wishlist %}
+<div class="col-sm-4 py-2">
+        <div class="card h-100">
+            <img class="card-img-top" height="55%" src="{{item.image.url}}" alt="Card image cap">
+            <div class="card-body bg-light">
+                <h3 class="card-title">{{item.name}}</h3>
+                <a href="{% url 'item-detail' item.id %}" class="btn btn-outline-dark">More</a>
+
+               {#  <button class="btn" onclick="wishlist({{item.id}})">                   
+                    <i id="star-{{item.id}}" class="fas fa-star {% if item.id in my_wishlist %}text-warning{% endif %}"></i>               
+                </button>
+ #}
+
+            </div>
+        </div>
+    </div>
+
+{% endfor %}
+</div>
+
+{% endblock content %}

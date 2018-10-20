@@ -70,7 +70,7 @@ def user_logout(request):
     return redirect('item-list')
 
 
-def wishlist(request, item_id):
+def wishlist_items(request, item_id):
     item_obj = Item.objects.get(id = item_id)
     if request.user.is_anonymous:
         return redirect ('user-login')
@@ -79,13 +79,25 @@ def wishlist(request, item_id):
     if created:
         action = "wishlisted"
     else:
-        wishlisted.delete()
         action = "unlisted"
+        wishlisted.delete()
 
     response = {
         "action" : action,
     }
 
     return JsonResponse (response, safe = False)
+
+def wishlist (request):
+    if request.user.is_authenticated:
+        my_wishlist = [wishlisted.item.id for wishlisted in request.user.favoriteitem_set.all()] 
+
+    context = {
+        "my_wishlist" : my_wishlist,
+    }
+    return render (request, "wishlist.html", context)
+
+
+
 
 
