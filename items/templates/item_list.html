@@ -31,11 +31,11 @@
        $.ajax(
            {
                type:'GET',
-               url: '/wishlist/'+item_id+'/',
+               url: 'items/'+item_id+'/wishlist/',
                success: function(data){
                    if (data.action==="wishlisted"){
                         console.log(data.action);
-                       $(star_id).addClass("text-warning");
+                       $(star_id).addClass("text-warning")
                    }
                    else{
                         console.log('nope');
