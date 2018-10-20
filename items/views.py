@@ -1,14 +1,31 @@
 from django.shortcuts import render, redirect
-from items.models import Item
+from items.models import Item, FavoriteItem
 from .forms import UserRegisterForm, UserLoginForm
 from django.contrib.auth import login, logout, authenticate
+from django.db.models import Q
 
 # Create your views here.
 def item_list(request):
+    item = Item.objects.all()
+    query = request.GET.get('q')
+    if query:
+        item = item.filter(
+            Q(name__icontains = query)|
+            Q(description__icontains = query)
+
+            ).distinct()
+
+    if request.user.is_anonymous:
+        return redirect ('user-login')
+
+    my_wishlist = [wishlisted.item.id for wishlisted in request.user.favoriteitem_set.all()] 
+
     context = {
-        "items": Item.objects.all()
+        "items": item,
+        "my_wishlist" : my_wishlist
     }
     return render(request, 'item_list.html', context)
+
 
 def item_detail(request, item_id):
     context = {
@@ -51,3 +68,24 @@ def user_logout(request):
     logout(request)
 
     return redirect('item-list')
+
+
+def wishlist(request, item_id):
+    item_obj = Item.objects.get(id = item_id)
+    if request.user.is_anonymous:
+        return redirect ('user-login')
+
+    wishlisted, created = FavoriteItem.objects.get_or_create(user = request.user, item = item_obj)
+    if created:
+        action = "wishlisted"
+    else:
+        wishlisted.delete()
+        action = "unlisted"
+
+    response = {
+        "action" : action,
+    }
+
+    return JsonResponse (response, safe = False)
+
+

@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<form class="form-inline my-2 my-lg-0">
-        <input class="form-control mr-sm-2" type="search" placeholder="Search Items" aria-label="Search">
+<form action = "{% url 'item-list'%}" class="form-inline my-2 my-lg-0" method = "GET">
+        <input class="form-control mr-sm-2" type="text" placeholder="Search Items" value = "{{request.GET.q}}" aria-label="Search" name = 'q'>
         <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
 </form>
 <div class="row">
@@ -13,10 +13,48 @@
             <div class="card-body bg-light">
                 <h3 class="card-title">{{item.name}}</h3>
                 <a href="{% url 'item-detail' item.id %}" class="btn btn-outline-dark">More</a>
+
+                <button class="btn" onclick="wishlist({{item.id}})">                   
+                    <i id="star-{{item.id}}" class="fas fa-star {% if item.id in my_wishlist %}text-warning{% endif %}"></i>               
+                </button>
+
+
             </div>
         </div>
     </div>
 
 {% endfor %}
 </div>
-{% endblock%}
+
+<script>
+
+  function wishlist(item_id) 
+  {
+    let star_id = "#star-"+item_id;
+    console.log(star_id);
+       $.ajax(
+           {
+               type:'GET',
+               url: '/wishlist/'+item_id+'/',
+               success: function(data){
+                   if (data.action==="wishlisted"){
+                        console.log(data.action);
+                       $(star_id).addClass("text-warning");
+                   }
+                   else{
+                        console.log('nope');
+                       $(star_id).removeClass("text-warning")
+                   }
+               },
+                error: function(){
+                   alert ("Something went wrong, please try again.")
+               }
+           }
+       );
+   } 
+</script>
+
+
+{% endblock content%}
+
+
