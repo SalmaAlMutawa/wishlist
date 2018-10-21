@@ -3,7 +3,7 @@ from items.models import Item, FavoriteItem
 from .forms import UserRegisterForm, UserLoginForm
 from django.contrib.auth import login, logout, authenticate
 from django.db.models import Q
-
+from django.http import JsonResponse
 # Create your views here.
 def item_list(request):
     item = Item.objects.all()

@@ -31,7 +31,7 @@
        $.ajax(
            {
                type:'GET',
-               url: 'items/'+item_id+'/wishlist/',
+               url: '/items/'+item_id+'/wishlist/',
                success: function(data){
                    if (data.action==="wishlisted"){
                         console.log(data.action);
